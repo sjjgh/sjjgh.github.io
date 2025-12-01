@@ -1,0 +1,8 @@
+title: "Jiajie Shi"
+description: "Research in Graph ML, Hyperbolic Geometry, and Biological Modeling"
+theme: jekyll-theme-cayman
+
+# (optional) enable markdown features
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
