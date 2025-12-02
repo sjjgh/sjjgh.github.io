@@ -3,7 +3,7 @@
 
 @import "jekyll-theme-cayman";
 
-// Inheritance OK, now write your custom colors below:
-body { background: #fdf6e3; }
-h1, h2, h3 { color: #657b83; }
-a { color: #268bd2; }
+.page-header {
+  background-image: linear-gradient(135deg, #eefdfa, #d4f4ef) !important;
+}
+
