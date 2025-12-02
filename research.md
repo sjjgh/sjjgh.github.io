@@ -1,7 +1,10 @@
+
 ---
 title: Research Blogs
 layout: default
 ---
+
+[Home](/) | [Research Blogs](/research)
 
 # Research Blogs
 
