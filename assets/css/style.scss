@@ -4,6 +4,11 @@
 @import "jekyll-theme-cayman";
 
 .page-header {
-  background-image: linear-gradient(135deg, #eefdfa, #d4f4ef) !important;
+  /* 青花瓷风格淡青蓝渐变 */
+  background-image: linear-gradient(135deg, #eaf6fb, #c9e8f5, #a7cde3) !important;
+  
+  /* 标题颜色改成黑色（或深灰）以确保可读性 */
+  color: #222 !important;
 }
+
 
