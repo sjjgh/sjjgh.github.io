@@ -1,3 +1,5 @@
+[Home](/) | [Research Blogs](/research)
+
 # Welcome 👋
 
 Hi, I'm **Jiajie Shi**, a Data Scientist and independent researcher with a Ph.D. in Mathematics.
