@@ -1,11 +1,13 @@
-# Graph Renaissance - basic aggreements
+# Graph Learning Renaissance (1) - basic aggreements
 After I started working more closely with machine learning, I read and reviewed many papers related to graphs.
 
-Many of them felt a bit odd to me—not because they were wrong, but because they often focused on inventing increasingly sophisticated tricks on graphs, without clearly explaining the intuition behind them.
+Many of them felt a bit odd to me—not because they were wrong, but because they often focused on inventing increasingly sophisticated tricks on graphs, without clearly explaining the intuition behind them. You often see phrases like “Better neighborhood modeling,” “enhance aggregation power,” “Structure-aware representations,” or “Expressive node representations.” They sound convincing, but I often find myself wondering what they really refer to beneath the surface.
 
-Coming from a mathematics and physics background, I tend to care more about the reasoning behind a phenomenon than about engineering a black-box method. To me, good intuition usually comes from first asking a more fundamental question: what is a graph, and how should we interpret it in the context of machine learning?
+Coming from a mathematics and physics background, I tend to care more about the reasoning behind a phenomenon rather than engineering a black-box method. For me, good intuition usually starts with a more basic question: what is a graph, and how should we think about it in machine learning?
 
-During the first several years of my PhD, I spent a lot of time playing with graphs and embedding methods. Along the way, I gradually formed some perspectives that I rarely saw discussed explicitly. I felt they were worth writing down—and this blog is an attempt to do exactly that.
+I believe that doing machine learning with graphs should begin with a clearer understanding of the nature of graphs themselves, as well as how features and embeddings associcated with them.
+
+During the first several years of my PhD, I spent a lot of time playing with graphs and embedding methods. Along the way, I gradually formed some perspectives that I rarely saw discussed explicitly. I felt they were worth writing down—and this series of articles is an attempt to do exactly that.
 
 ## What is graph
 Informally speaking, a graph is a set of nodes and edges, usually denoted as (V,E). Any structure that can be described in this way can be called a graph—for example, a social network where nodes represent people and edges represent friendships, or a brain network where nodes are cells and edges represent neural connections.
