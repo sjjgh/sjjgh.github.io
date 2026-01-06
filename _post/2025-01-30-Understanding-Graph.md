@@ -3,7 +3,7 @@ After I started working more closely with machine learning, I read and reviewed 
 
 Many of them felt a bit odd to me—not because they were wrong, but because they often focused on inventing increasingly sophisticated tricks on graphs, without clearly explaining the intuition behind them. You often see phrases like “Better neighborhood modeling,” “enhance aggregation power,” “Structure-aware representations,” or “Expressive node representations.” They sound convincing, but I often find myself wondering what they really refer to beneath the surface.
 
-Coming from a mathematics and physics background, I tend to care more about the reasoning behind a phenomenon rather than engineering a black-box method. For me, good intuition usually starts with a more basic question: what is a graph, and how should we think about it in machine learning?
+Coming from a mathematics and physics background, I tend to care more about the reasoning behind a phenomenon rather than engineering a black-box method. 
 
 I believe that doing machine learning with graphs should begin with a clearer understanding of the nature of graphs themselves, as well as how features and embeddings associcated with them.
 
@@ -12,9 +12,9 @@ During the first several years of my PhD, I spent a lot of time playing with gra
 ## What is graph
 Informally speaking, a graph is a set of nodes and edges, usually denoted as (V,E). Any structure that can be described in this way can be called a graph—for example, a social network where nodes represent people and edges represent friendships, or a brain network where nodes are cells and edges represent neural connections.
 
-Graphs are universal, but that is not what makes them interesting. What makes graphs powerful is that they provide a very efficient abstraction for representing relationships between entities.
+Graphs are universal: whenever there are objects and relationships between them, a graph provides a simple and efficient way to represent that structure.
 
-These relationships are rarely governed by a single factor. In a social network, friendship may form because two people share similar hobbies, attend the same classes, live nearby, or simply interact frequently. In brain networks, connections between cells are more likely shaped by complex biological rules encoded in genes. In both cases, the observed graph is the outcome of many interacting influences.
+In real applications, graphs encode these relationships as well, but they are rarely governed by a single factor. In a social network, friendships may form because people share similar hobbies, attend the same classes, live nearby, or simply interact frequently. In brain networks, connections between cells are more likely shaped by complex biological rules encoded in genes. In both cases, the observed graph is the result of many interacting influences.
 
 ## Graphs in Machine Learning
 
@@ -26,9 +26,11 @@ The first point I want to make explicit is this:
 
 Edge generation is driven by complex, latent, and often unidentifiable mechanisms. Most of the time, we are neither able nor trying to recover these mechanisms.
 
-For example, in a social network, the hidden “rule” behind friendship formation might look like a messy combination of factors， which might be something like: similar hobbies + different jobs + personality match + both enjoy outreach + age difference within four years → higher chance of friendship. And even that is still an oversimplification: in reality, the process is usually probabilistic rather than deterministic, and the factors interact in complicated ways.
+For example, in a social network, the hidden “rule” behind friendship formation might look like a messy combination of factors，which might be something like: similar hobbies + different jobs + personality match + both enjoy outreach + age difference within four years → higher chance of friendship. And even that is still an oversimplification: in reality, the process is usually probabilistic rather than deterministic, and the factors interact in complicated ways.
 
-If our goal is to predict something like whether a person owns a cat, we don’t actually care about the true rule that generated the edges. What we care about is predictive utility. Fully recovering the real mechanism is often impossible—and even if it were possible, it might not be the most useful thing for the task.
+Good thing is that we don't have to recover or infer these (in most tasks).
+
+If our goal is to predict something like whether a person owns a cat, we don’t actually care about the true rule that generated the friendship edges (for now). What we care about is predictive utility. Fully recovering the real mechanism is often impossible—and even if it were possible, it might not be the most useful thing for the task. What we care more is feature.
 
 ## From Graphs to Features
 
@@ -39,7 +41,7 @@ Although we do not attempt to recover the true mechanisms that generate a graph,
 
 Since the underlying rules behind a graph are usually unknown, we are forced to make assumptions about how structure relates to similarity or relevance. Under such assumptions, we can construct features from a graph—most commonly through what is broadly referred to as embedding. I will leave the details of embedding methods to a separate article.
 
-For now, the important point is this: the vectors produced by embedding do not correspond to explicit semantic attributes like age or occupation. They are not “real” features in that sense. Instead, they are abstract representations induced by our assumptions about the graph.
+The important point here is: the vectors produced by embedding do not correspond to any explicit semantic attributes like age or occupation. They are not “real” features in that sense. Instead, they are abstract representations induced by our assumptions about the graph.
 
 In other words, an embedding is not something we discover in the data. It is something we construct—a modeling choice shaped by both the graph structure **plus the assumptions we impose on it**.
 
