@@ -1,4 +1,4 @@
-# Graph Learning Renaissance (1) - basic aggreements
+# Graph Learning Renaissance (1) - basics
 After I started working more closely with machine learning, I read and reviewed many papers related to graphs.
 
 Many of them felt a bit odd to me—not because they were wrong, but because they often focused on inventing increasingly sophisticated tricks on graphs, without clearly explaining the intuition behind them. You often see phrases like “Better neighborhood modeling,” “enhance aggregation power,” “Structure-aware representations,” or “Expressive node representations.” They sound convincing, but I often find myself wondering what they really refer to beneath the surface.
@@ -10,20 +10,27 @@ I believe that doing machine learning with graphs should begin with a clearer un
 During the first several years of my PhD, I spent a lot of time playing with graphs and embedding methods. Along the way, I gradually formed some perspectives that I rarely saw discussed explicitly. I felt they were worth writing down—and this series of articles is an attempt to do exactly that.
 
 ## What is graph
-Informally speaking, a graph is a set of nodes and edges, usually denoted as (V,E). Any structure that can be described in this way can be called a graph—for example, a social network where nodes represent people and edges represent friendships, or a brain network where nodes are cells and edges represent neural connections.
+Informally speaking, a graph is a set of nodes and edges, usually denoted as (V,E). Any structure that can be described this way can be called a graph—for example, a social network where nodes represent people and edges represent friendships, or a brain network where nodes are cells and edges represent neural connections.
 
-Graphs are universal: whenever there are objects and relationships between them, a graph provides a simple and efficient way to represent that structure.
+What makes graphs powerful is that they provide a simple and efficient abstraction for relational structure. Whenever there are objects and relationships among them, a graph offers a compact way to represent those relationships.
 
-In real applications, graphs encode these relationships as well, but they are rarely governed by a single factor. In a social network, friendships may form because people share similar hobbies, attend the same classes, live nearby, or simply interact frequently. In brain networks, connections between cells are more likely shaped by complex biological rules encoded in genes. In both cases, the observed graph is the result of many interacting influences.
+However, graphs do not appear out of nowhere. In most real-world settings, a graph is the result of some underlying process that determines which nodes are connected.
+
+A common modeling assumption is that each node has certain properties, and that connections are formed according to rules—explicit or implicit—that depend on these properties. These rules give rise to the observed graph structure.
+
+Importantly, such rules are rarely governed by a single factor. In a social network, friendships may form because people share similar hobbies, attend the same classes, live nearby, or simply interact frequently. In brain networks, connections between cells are shaped by complex biological mechanisms encoded in genes. In both cases, the observed graph reflects the combined effect of many interacting influences.
 
 ## Graphs in Machine Learning
 
-In practice—both in real applications and in machine learning—we are often given a graph, sometimes along with node features. Consider a simple and common setup: a social network where edges indicate friendships, and each node has features such as age, gender, or occupation.
+In machine learning, a common senario is we are given a graph, sometimes along with node features to perform different tasks. Consider a simple and common setup: a social network where edges indicate friendships, and each node has features such as age, gender, or occupation.
 
 What can we say about such a graph?
 
-The first point I want to make explicit is this:
+The given feature is something machine learning likes, but graph is not? what information can we squeeze out of the graph to feed into our model?
 
+A most straight forward intuition is to find out the connection rule and by them, recover the hidden attributes goven by the rule to form edge.
+
+But here is the point:
 Edge generation is driven by complex, latent, and often unidentifiable mechanisms. Most of the time, we are neither able nor trying to recover these mechanisms.
 
 For example, in a social network, the hidden “rule” behind friendship formation might look like a messy combination of factors，which might be something like: similar hobbies + different jobs + personality match + both enjoy outreach + age difference within four years → higher chance of friendship. And even that is still an oversimplification: in reality, the process is usually probabilistic rather than deterministic, and the factors interact in complicated ways.
