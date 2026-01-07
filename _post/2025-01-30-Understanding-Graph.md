@@ -22,33 +22,30 @@ Importantly, such rules are rarely governed by a single factor. In a social netw
 
 ## Graphs in Machine Learning
 
-In machine learning, a common senario is we are given a graph, sometimes along with node features to perform different tasks. Consider a simple and common setup: a social network where edges indicate friendships, and each node has features such as age, gender, or occupation.
+In machine learning, a common scenario is that we are given a graph, sometimes along with node features, and asked to perform a downstream task. Consider a simple and familiar setup: a social network where edges indicate friendships, and each node comes with features such as age, gender, or occupation.
 
-What can we say about such a graph?
+At first glance, this setup already reveals a tension. Machine learning models are designed to operate on features, while a graph encodes relations. Features can be directly fed into a model; a graph, by itself, cannot. This naturally raises a question: what information can we extract from the graph and turn into something a learning algorithm can actually use?
 
-The given feature is something machine learning likes, but graph is not? what information can we squeeze out of the graph to feed into our model?
+A straightforward intuition is to try to recover the rule that generates the edges, and then infer the hidden attributes that drive these connections. If we understood the connection rule, perhaps we could reconstruct the missing information behind the graph.
 
-A most straight forward intuition is to find out the connection rule and by them, recover the hidden attributes goven by the rule to form edge.
-
-But here is the point:
-Edge generation is driven by complex, latent, and often unidentifiable mechanisms. Most of the time, we are neither able nor trying to recover these mechanisms.
+However, this intuition quickly breaks down. Edge generation is driven by complex, latent, and often unidentifiable mechanisms. Most of the time, we are neither able nor trying to recover these mechanisms. In practice, fully explaining why two nodes are connected is both infeasible and unnecessary for most predictive tasks.
 
 For example, in a social network, the hidden “rule” behind friendship formation might look like a messy combination of factors，which might be something like: similar hobbies + different jobs + personality match + both enjoy outreach + age difference within four years → higher chance of friendship. And even that is still an oversimplification: in reality, the process is usually probabilistic rather than deterministic, and the factors interact in complicated ways.
 
 Good thing is that we don't have to recover or infer these (in most tasks).
 
-If our goal is to predict something like whether a person owns a cat, we don’t actually care about the true rule that generated the friendship edges (for now). What we care about is predictive utility. Fully recovering the real mechanism is often impossible—and even if it were possible, it might not be the most useful thing for the task. What we care more is feature.
+If our goal is to predict something like whether a person owns a cat, we don’t actually care about the true rule that generated the friendship edges (for now). What we care about is predictive utility. Fully recovering the real mechanism is often impossible—and even if it were possible, it might not be the most useful thing for the task.
 
 ## From Graphs to Features
 
-Machine learning works with features, not relations.
+Machine learning likes features, not relations. But if graph comes from feature + relations.
 
 This leads to the second key point.
-Although we do not attempt to recover the true mechanisms that generate a graph, we still need a way to turn relational structure into something a learning algorithm can use.
+Although we do not attempt to recover the true mechanisms that generate a graph, we still need a way to findout the hidden features of nodes a learning algorithm can use.
 
 Since the underlying rules behind a graph are usually unknown, we are forced to make assumptions about how structure relates to similarity or relevance. Under such assumptions, we can construct features from a graph—most commonly through what is broadly referred to as embedding. I will leave the details of embedding methods to a separate article.
 
-The important point here is: the vectors produced by embedding do not correspond to any explicit semantic attributes like age or occupation. They are not “real” features in that sense. Instead, they are abstract representations induced by our assumptions about the graph.
+The important point here is: the vectors produced by the embedding process do not correspond to any explicit semantic attributes like age or occupation. They are not “real” features in that sense. Instead, they are abstract representations induced by our assumptions about the graph.
 
 In other words, an embedding is not something we discover in the data. It is something we construct—a modeling choice shaped by both the graph structure **plus the assumptions we impose on it**.
 
