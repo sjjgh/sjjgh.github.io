@@ -38,16 +38,19 @@ If our goal is to predict something like whether a person owns a cat, we don’t
 
 ## From Graphs to Features
 
-Machine learning likes features, not relations. But if graph comes from feature + relations.
+Machine learning methods likes features, not relations. 
 
-This leads to the second key point.
-Although we do not attempt to recover the true mechanisms that generate a graph, we still need a way to findout the hidden features of nodes a learning algorithm can use.
+Graphs, however, encode relations. This creates a gap: if our input is a graph, how do we turn relational structure into something a learning algorithm can actually use?
 
-Since the underlying rules behind a graph are usually unknown, we are forced to make assumptions about how structure relates to similarity or relevance. Under such assumptions, we can construct features from a graph—most commonly through what is broadly referred to as embedding. I will leave the details of embedding methods to a separate article.
+Although we do not attempt to recover the true mechanisms that generate a graph, we still need a way to extract useful representations for nodes. These representations are what ultimately enter a machine learning model.
 
-The important point here is: the vectors produced by the embedding process do not correspond to any explicit semantic attributes like age or occupation. They are not “real” features in that sense. Instead, they are abstract representations induced by our assumptions about the graph.
+Since the underlying rules behind a graph are usually complex and hard to identify, we rely on assumptions about how structure relates to similarity or relevance. Under these assumptions, we can construct node representations—typically in the form of vectors—by solving an optimization problem that enforces a simple idea: if the representation respects the assumed rule, the observed edges should become explainable. This process is commonly referred to as embedding. I will leave the details of embedding methods to a separate article.
 
-In other words, an embedding is not something we discover in the data. It is something we construct—a modeling choice shaped by both the graph structure **plus the assumptions we impose on it**.
+The important point here is this: the vectors produced by the embedding process do not correspond to explicit semantic attributes like age or occupation. They are not “real” features in that sense. Instead, they are abstract representations induced by the assumptions we make about the graph.
+
+From another perspective, these representations may still contain information related to real attributes—but in a highly entangled way. A single dimension of an embedding vector might mix factors such as age, location, or activity level, making them difficult to interpret directly. What ends up being encoded, and how, ultimately depends on the assumptions we impose and the optimization process used to enforce them.
+
+In short, an embedding is not something we discover in the data. It is something we construct—a modeling choice shaped by both the graph structure **and the assumptions we impose on it**.
 
 <!--
 The most common and reasonable assumption is homophily, which is implicitly used in most popular graph embedding methods.
