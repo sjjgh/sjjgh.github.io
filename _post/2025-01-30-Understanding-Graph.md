@@ -18,7 +18,7 @@ However, graphs do not appear out of nowhere. In most real-world settings, a gra
 
 A common modeling assumption is that each node has certain properties, and that connections are formed according to rules—explicit or implicit—that depend on these properties. These rules give rise to the observed graph structure.
 
-Importantly, such rules are rarely governed by a single factor. In a social network, friendships may form because people share similar hobbies, attend the same classes, live nearby, or simply interact frequently. In brain networks, connections between cells are shaped by complex biological mechanisms encoded in genes. In both cases, the observed graph reflects the combined effect of many interacting influences.
+Such rules are rarely governed by a single factor. In a social network, friendships may form because people share similar hobbies, attend the same classes, live nearby, or simply interact frequently. In brain networks, connections between cells are shaped by complex biological mechanisms encoded in genes. In both cases, the observed graph reflects the combined effect of many interacting influences.
 
 ## Graphs in Machine Learning
 
@@ -26,7 +26,7 @@ In machine learning, a common scenario is that we are given a graph, sometimes a
 
 At first glance, this setup already reveals a tension. Machine learning models are designed to operate on features, while a graph encodes relations. Features can be directly fed into a model; a graph, by itself, cannot. This naturally raises a question: what information can we extract from the graph and turn into something a learning algorithm can actually use?
 
-A straightforward intuition is to try to recover the rule that generates the edges, and then infer the hidden attributes that drive these connections. If we understood the connection rule, perhaps we could reconstruct the missing information behind the graph.
+A straightforward intuition is to try to find out the rule that generates the edges, and then infer the hidden attributes that drive these connections. If we understood the connection rule, perhaps we could reconstruct the missing information behind the graph.
 
 However, this intuition quickly breaks down. Edge generation is driven by complex, latent, and often unidentifiable mechanisms. Most of the time, we are neither able nor trying to recover these mechanisms. In practice, fully explaining why two nodes are connected is both infeasible and unnecessary for most predictive tasks.
 
@@ -40,9 +40,7 @@ If our goal is to predict something like whether a person owns a cat, we don’t
 
 Machine learning methods likes features, not relations. 
 
-Graphs, however, encode relations. This creates a gap: if our input is a graph, how do we turn relational structure into something a learning algorithm can actually use?
-
-Although we do not attempt to recover the true mechanisms that generate a graph, we still need a way to extract useful representations for nodes. These representations are what ultimately enter a machine learning model.
+Graphs encode relations, while machine learning models operate on features. Without attempting to recover the true mechanisms that generate a graph, we still need a way to turn relational structure into representations that a learning algorithm can use.
 
 Since the underlying rules behind a graph are usually complex and hard to identify, we rely on assumptions about how structure relates to similarity or relevance. Under these assumptions, we can construct node representations—typically in the form of vectors—by solving an optimization problem that enforces a simple idea: if the representation respects the assumed rule, the observed edges should become explainable. This process is commonly referred to as embedding. I will leave the details of embedding methods to a separate article.
 
