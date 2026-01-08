@@ -11,5 +11,7 @@ Welcome to my research blog page.
 Here I will publish research notes, ideas, and technical articles.
 
 ## Articles
-- *(No articles yet — more coming soon)*
+{% for post in site.posts %}
+- [{{ post.title }}]({{ post.url }})
+{% endfor %}
 
