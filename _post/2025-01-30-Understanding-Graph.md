@@ -1,3 +1,8 @@
+---
+layout: post
+title: "Understanding Graph"
+---
+
 # Graph Learning Renaissance (1) - basics
 After I started working more closely with machine learning, I read and reviewed many papers related to graphs.
 
