@@ -2,11 +2,13 @@
 
 ## Graph Embedding
 
-So how does graph embedding proceed? Like we said, we first need an assumption. And the most widely used assumption is the assumption homophily. The homophily assumes node similar to each other have big chance to be connected. with this assuption we can conveniently embed a graph by minmize d(x,y) for x,y connected. By sovling this optimization problem. We are able to get the simulated features control by our assumpted rules.
+So how does graph embedding proceed? Like we said, we first need an assumption. And the most widely used assumption is the assumption homophily. The homophily assumes node similar to each other have big chance to be connected. with this assuption we can conveniently embed a graph by looking at the pairs connected and want the vector represent them to be close where those not connected far away, in the embedding space. Formally speaking, we can minmize an objective function like d(x,y)-d (x,z) for x,y connected, x,z not connected. By sovling this optimization problem. We are able to get the most possible feature sets governed by the assumpted rule that generate the graph. And these features can be used for our downsteams tasks.
 
 ## Deeper (you could skip this if too complicatd)
 
-I dont know if the process makes sense to you but we need to go a little bit deeper to that. two questions arise:1. why homophily 2. what is d(x,y) used in this process, and why?
+The above process seems works fine and infact it does works fine. But not many people dig deeper into it and we want know the reason behind it.
+
+two questions arise:1. why homophily 2. what is d(x,y) used in this process, and why?
 
 Similarity appears special not because all relations reduce to similarity, but because similarity provides a universal computational substrate. Many relational rules—semantic, causal, or structural—can be embedded into higher-dimensional spaces where their effects are simulated through geometric proximity or alignment. This does not make those relations inherently metric; it makes them computable.  Similarity is not a relation; it is the language in which many relations are expressed.
 
