@@ -10,6 +10,10 @@ The above process seems works fine and infact it does works fine. But not many p
 
 two questions arise:1. why homophily 2. what is d(x,y) used in this process, and why?
 
+The two question are actually related. first. why homophily. You might ask is there a possibility that if we assume a different rule, a measure other than similarity (repusive or other combinined verion) that brings us more powerful representation for downstream task. Most certainly! Because the real word connection are usually complex we can not believe that similarity is the only factor. First, rules differ from graphs. It is hard, and meanless to find and guess every perfect connection rule for each graph, and we want have the general rules that works well for most graph. Second, Why we choose similarity among all other rules. The main reason is that from biology and human socity, we oberserve the phnomeon that similiarity breeds connection, it is observed and proved from many aspect. So similarity naturally standout as an general assumption for graphs and it works well in most field.
+
+And the second reason is that the way we calculate similarity is actually another form of generality, and that actually related to our second question.
+
 Similarity appears special not because all relations reduce to similarity, but because similarity provides a universal computational substrate. Many relational rules—semantic, causal, or structural—can be embedded into higher-dimensional spaces where their effects are simulated through geometric proximity or alignment. This does not make those relations inherently metric; it makes them computable.  Similarity is not a relation; it is the language in which many relations are expressed.
 
 ## Generalized Embedding
