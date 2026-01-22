@@ -2,10 +2,16 @@
 
 ## Graph Embedding
 
-So how does graph embedding actually work?
+So now we talk about embedding. like we previous statement:it cannot even begin without an assumption.
+
+Someone might feel weird. we use embedding every day? we simply embeding them in a way connected pair are close. where is the assumption.
+
+The truth is the assumption is homophology and it is so common and we tend to ignore it. I know it is in your mind ,but we need to realize this is the assimption.
+
+So how does graph embedding actually work? You ask a guy in community, that should be a very basic question. And lot of methods will come up, people uses that every day. But I can say 
 
 The short answer is: it cannot even begin without an assumption.
-And among all possible assumptions, the most widely adopted one is homophily.
+And among all possible assumptions, the most widely adopted one is homophily. And those embedding method who does not most uses this assumption implictly.
 
 Homophily assumes that nodes which are similar to each other are more likely to be connected. Importantly, this is not a statement about what a graph is, but about how we believe the graph was generated. Once we accept this assumption, the edges in the graph immediately acquire meaning: a connection becomes evidence of similarity, while the absence of a connection suggests dissimilarity.
 
