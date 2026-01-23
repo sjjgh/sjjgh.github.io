@@ -27,13 +27,9 @@ In this sense, graph embedding is less about discovering structure, and more abo
 
 
 ## Think deeper on the assumpiton
-The above process seems to work fine—and in practice, it indeed works remarkably well. However, relatively few discussions dig deeper into why it works, or what assumptions are quietly supporting it.
+Now we know what kind of base our house of embedding was built on, but someone might ask: Why this base, is it solid?
 
-This naturally leads to a central question:
-
-Why homophily?
-
-The question is very natural be discussed rarely. There are so many different relationships in realworld. Why we choose similarity specifically? Why it works well? Can it goes wrong in some situations?
+Specifically, why we use homophily as our assumption? is it reliable? Can it goes wrong in some situations?
 
 To answer these questions, we can discuss two closely related aspects:
 
@@ -42,7 +38,6 @@ To answer these questions, we can discuss two closely related aspects:
 2. The way we compute similarity is itself flexible and highly expressive.
 
 ### Homophily Is General in Real-World Graphs
-
 One may reasonably ask: is it possible that by assuming a different rule—something other than similarity, such as repulsion or a more complex combination of mechanisms—we could obtain more powerful representations for downstream tasks?
 
 The answer is almost certainly yes. Real-world connections are rarely governed by a single factor. Similarity is not the only force at play; complementarity, competition, hierarchy, and repulsion all appear in different contexts. Treating similarity as the sole mechanism would therefore be an oversimplification.
@@ -54,6 +49,7 @@ Instead, what we seek is a general assumption—one that works reasonably well a
 For this reason, homophily naturally emerges as a general modeling choice, and it has proven effective in a wide range of fields.
 
 ### Similarity as a universal metric
+
 
 The second reason homophily works so well lies not only in the assumption itself, but in how similarity is computed.
 
