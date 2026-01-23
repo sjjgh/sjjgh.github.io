@@ -31,24 +31,20 @@ Now we know what kind of base our house of embedding was built on, but someone m
 
 Specifically, why we use homophily as our assumption? is it reliable? Can it goes wrong in some situations?
 
-To answer these questions, we can discuss two closely related aspects:
+The short answer is: because homophile is general. But I would like to discuss it in two aspects.
 
-1. Similarity is a broadly valid assumption across many real-world graphs.
-
-2. The way we compute similarity is itself flexible and highly expressive.
-
-### Homophily Is General in Real-World Graphs
+### Homophily Is General as we obeserve it a lot
 One may reasonably ask: is it possible that by assuming a different rule—something other than similarity, such as repulsion or a more complex combination of mechanisms—we could obtain more powerful representations for downstream tasks?
 
 The answer is almost certainly yes. Real-world connections are rarely governed by a single factor. Similarity is not the only force at play; complementarity, competition, hierarchy, and repulsion all appear in different contexts. Treating similarity as the sole mechanism would therefore be an oversimplification.
 
 However, the goal of graph embedding is not to discover the exact, graph-specific rule that generates each individual network. Such a goal would be both impractical and conceptually questionable. Rules differ across graphs, and attempting to guess a “perfect” generative rule for every dataset is neither scalable nor meaningful.
 
-Instead, what we seek is a general assumption—one that works reasonably well across many graphs and domains. From this perspective, similarity stands out. Across biology and human society, the phenomenon that similarity breeds connection has been repeatedly observed and empirically validated from many angles. While it is not universal, it is common enough to serve as a robust default assumption.
+Instead, what we seek is a general assumption—one that works reasonably well across many graphs and domains. From this perspective, similarity stands out. Across biology and human society, the phenomenon that similarity breeds connection has been repeatedly observed and empirically validated from many angles. While it is not universal, it is common enough to serve as a robust default assumption. The principle of homophily states that “similarity breeds connection”. Numerous studies on homophily have provided strong evidence that similarity in various aspects of our daily life such as ethnicity, gender, age, religion, education, occupation, behavior and attitude breeds the formation of social ties (for a review, see McPherson et al., 2001). They also quote expression is "birds of a feather flock together"[1].
 
 For this reason, homophily naturally emerges as a general modeling choice, and it has proven effective in a wide range of fields.
 
-### Similarity as a universal metric
+### Similarity is a general metric
 
 
 The second reason homophily works so well lies not only in the assumption itself, but in how similarity is computed.
