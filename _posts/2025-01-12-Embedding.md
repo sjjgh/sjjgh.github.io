@@ -48,6 +48,17 @@ That is why homophily naturally becomes a general modeling choice: not because i
 
 
 ### 2) Similarity can be more easily learned by our machine
+New New:
+So assume we know it is similarity that rule. There are infinely many of similaritys. How do we know which kind of similarity we want to calculate? The most common way to do it in machine learning is Euclidean distance and Dot product. How can we confidently say, ok, the similarity is euclidean?
+
+The question seems stupid but the answer is a little bit involved. Many peopel my know the most blatant answer. because the paramer can be learned, for example, if the "truth" similary is x1*y1+100x2*y2. then with enough data, the learn feature will be (x,10y) so the way, machine produce the similarity again becomes x1*y1+100x2*y2 while still using dot product. (Thats also why we emphasis that the learning feature is not necessary the true feature). And some might ask deeper: what if the rule are not simple? what if the similarity expressed in a more complex, nonlinear way?
+
+A thing I want to mention is that dot product is more powerful than many people thought. Mathematically speaking, A single dot product can represent exactly the family of PSD-kernel similarities (inner products in some feature space). The PSD-kernel similarity means that k(x,y) = <φ(x), φ(y)>。
+Dot product looks simple, but its strength comes from learnable representations. What we really learn is the feature map φ(·), making ⟨φ(x), φ(y)⟩ capable of emulating a large family of PSD-kernel similarities—using the same computational interface. There are strict proof shows that IPS equipped with a sufficiently large neural network is highly expressive and it has been proved to approximate arbitrary Positive Definite (PD) similarities [Okuno et al., 2018], e.g., cosine similarity
+
+todo: let AI read the paper and discuss with me.
+
+
 
 new:
 
