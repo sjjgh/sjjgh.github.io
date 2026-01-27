@@ -47,7 +47,7 @@ That is why homophily naturally becomes a general modeling choice: not because i
 
 
 
-### 2) Similarity is “general” because its *computation* is also general
+### 2) Similarity can be more easily learned by our machine
 
 new:
 
