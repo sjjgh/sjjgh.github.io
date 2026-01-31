@@ -48,7 +48,41 @@ That is why homophily naturally becomes a general modeling choice: not because i
 
 
 ### 2) How we calculate the similarity
-New3: As we answered why we use the assumption of homopholy, a second question comes, how do we calculate the similarity? There are many different similarity: cosine, euclidean, jacard which similarity do we choose? can we be wrong when we choose wrong similarity? Or are we making assumption of assumption of which measure we are using?
+New3: Once we accept *homophily* as the generative story—“similar nodes tend to connect”—a second question quietly takes over: **what exactly do we mean by “similar”?**
+In practice, similarity is not a single universal notion. We have cosine similarity, Euclidean distance, Jaccard overlap, edit distance, Wasserstein distance, and many others. Each of them encodes a different inductive bias: cosine focuses on angle (direction), Euclidean focuses on absolute location and scale, Jaccard cares about set overlap, and so on.
+This immediately raises an uncomfortable possibility: **can we be wrong simply by choosing the wrong similarity?**  
+And if so, aren’t we making an *assumption on top of an assumption*—first homophily, then a specific similarity measure?
+The short answer is yes. But there is a reason most embedding methods still converge to a surprisingly small set of “similarity calculators,” especially the dot product.
+#### Dot product as a universal interface
+Many modern embedding systems do not commit to a handcrafted similarity like “Euclidean” or “Jaccard.” Instead, they choose a simple scoring form and push the complexity into the representation:
+\[
+s(x,y) = \langle \phi(x), \phi(y) \rangle,
+\]
+where `φ(·)` is a learnable embedding function (a table, an MLP, a GNN encoder, etc.). The dot product looks almost too simple, but its strength is precisely that **it is an interface**: if `φ` is expressive, the *effective* similarity becomes expressive.
+Mathematically, any positive semidefinite (PSD) kernel similarity can be written as an inner product in some feature space. So in the PSD world, the dot product is not a limitation—it is the canonical form. This helps explain why the same dot-product machinery keeps working across domains: we keep changing `φ`, and `φ` keeps changing what “similar” means.
+
+
+new3backups: 
+#### But what about Euclidean distance?
+At first glance, this seems to contradict a common intuition: “don’t we often want Euclidean distance, not dot product?”
+The key is that distance and inner product are tightly linked. In Euclidean space,
+\[
+\|\phi(x)-\phi(y)\|^2 = \|\phi(x)\|^2 + \|\phi(y)\|^2 - 2\langle \phi(x), \phi(y) \rangle.
+\]
+If the norms are controlled (by normalization, regularization, or simply the training dynamics), then ranking pairs by dot product becomes closely aligned with ranking them by distance. In other words, embedding methods are rarely trying to recover a fixed “true Euclidean geometry” of the raw data; instead, they learn a geometry in which dot product becomes a useful proxy for closeness.
+This is also why the apparent paradox is not a paradox: saying “dot product cannot represent an arbitrary distance” is a statement about function classes; saying “learning can make dot product behave like a distance” is a statement about **changing the representation so the geometry changes**.
+#### When the PSD world is not enough
+Of course, not every real-world affinity is PSD-kernel-like. Some similarities are indefinite (their Gram matrices have both positive and negative eigenvalues), and some are not even symmetric. In those cases, a single dot product is fundamentally too restrictive.
+This is exactly where a subtle extension becomes powerful: allow the inner product itself to be *indefinite*. Kim et al. (IJCAI’19) propose **Weighted Inner Product Similarity (WIPS)**:
+\[
+\langle y, y' \rangle_{\lambda} = \sum_{k=1}^K \lambda_k y_k y'_k,
+\]
+where the weights `λ_k` are learnable and can be **positive or negative**. This tiny change upgrades the model from “PSD-only” to a much broader family of similarities (including indefinite kernels), greatly reducing the need to manually guess which similarity model a dataset “really” wants.
+#### The deeper takeaway
+So yes, choosing a similarity measure is an assumption. But the reason embedding works so often is that we usually do not pick a single similarity by hand—we pick a **learnable similarity interface**.
+Homophily tells us *what edges mean* (“edges are evidence of similarity”).  
+The similarity model tells us *how similarity is computed*.  
+And the dot product—sometimes upgraded to its weighted/indefinite form—turns that second assumption into something we can optimize, learn, and adapt rather than hard-code.
 
 
 
