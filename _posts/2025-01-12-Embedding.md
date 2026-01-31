@@ -47,7 +47,11 @@ That is why homophily naturally becomes a general modeling choice: not because i
 
 
 
-### 2) Similarity can be more easily learned by our machine
+### 2) How we calculate the similarity
+New3: As we answered why we use the assumption of homopholy, a second question comes, how do we calculate the similarity? There are many different similarity: cosine, euclidean, jacard which similarity do we choose? can we be wrong when we choose wrong similarity? Or are we making assumption of assumption of which measure we are using?
+
+
+
 New New:
 So assume we know it is similarity that rule. There are infinely many of similaritys. How do we know which kind of similarity we want to calculate? The most common way to do it in machine learning is Euclidean distance and Dot product. How can we confidently say, ok, the similarity is euclidean?
 
@@ -98,6 +102,8 @@ So back to our question. We choose similarity beacuse it is general enough, in t
 ## Generalized Embedding
 so this is just graph embedding. seems narrow huh? but what if I tell you the idea behind graph embedding appear more than you think? it implictly affect many famous algorithm. I am not saying they designed in this way. But they in fact, in natural conincide in the graph embedding idea. Let me make two examples, netflex collaborative filter. next, word embedding now foundation of LLM.
 In fact the relations are so natural in our world and sometimes may not present as graph, we have to implict have them in mind, netflex, the relationship between product and customer is a biparte graph; in word embedding, we consider words in a senctence have strong correlation, thus a invisible edge. After knowing this, a fresh view of world appears to you.
+
+
 
 
 
