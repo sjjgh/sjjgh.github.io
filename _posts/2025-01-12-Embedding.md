@@ -48,6 +48,28 @@ That is why homophily naturally becomes a general modeling choice: not because i
 
 
 ### 2) How we calculate the similarity
+
+#### Dot product as an example
+Dot products show up everywhere in modern machine learning: from word embeddings to graph embedding, from retrieval models to contrastive learning. The first reason is almost trivial: it is the simplest possible interaction between two vectors—cheap to compute, easy to optimize, and easy to scale.
+
+But it is worth slowing down here. A dot product is not a metric: it does not satisfy the axioms of distance. (Even cosine similarity itself is not a metric; the angular distance derived from it is.) So why does something this simple work so well as a “similarity”?
+
+The part many people miss is that when we say “we use a dot product,” we are rarely using a dot product on raw inputs. We use it on learned representations. The model is free to learn a transformation φ(·)—an embedding table, an MLP, a GNN encoder, etc.—so the effective similarity is really
+
+\ k(x,y)=\langle \phi(x), \phi(y) \rangle . ]
+
+In other words, we are not committing to a fixed hand-designed similarity; we are choosing a learnable interface. The downstream task and training objective shape the parameters of φ, so the representation itself adapts to whatever notion of similarity the task rewards. This is also why embeddings should not be romanticized as “recovering the true features”: they co-evolve with the similarity model and the training signal we chose.
+
+Mathematically, any positive semidefinite (PSD) kernel can be written as an inner product in some feature space. So within the PSD world, the dot product is not a limitation—it is the canonical form. This helps explain why the same dot-product machinery keeps working across domains: we keep the interface, but we keep changing φ, and φ keeps changing what “similar” means.
+
+#### Similarities in ML models are not that rigid.
+todo.
+
+
+
+
+
+
 New3: Once we accept *homophily* as the generative story—“similar nodes tend to connect”—a second question quietly takes over: **what exactly do we mean by “similar”?**
 In practice, similarity is not a single universal notion. We have cosine similarity, Euclidean distance, Jaccard overlap, edit distance, Wasserstein distance, and many others. Each of them encodes a different inductive bias: cosine focuses on angle (direction), Euclidean focuses on absolute location and scale, Jaccard cares about set overlap, and so on.
 This immediately raises an uncomfortable possibility: **can we be wrong simply by choosing the wrong similarity?**  
