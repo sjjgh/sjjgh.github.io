@@ -52,7 +52,7 @@ That is why homophily naturally becomes a general modeling choice: not because i
 #### Dot product as an example
 Dot products show up everywhere in modern machine learning: from word embeddings to graph embedding, from retrieval models to contrastive learning. The first reason is almost trivial: it is the simplest possible interaction between two vectors—cheap to compute, easy to optimize, and easy to scale.
 
-But it is worth slowing down here. A dot product is not a metric: it does not satisfy the axioms of distance. (Even cosine similarity itself is not a metric; the angular distance derived from it is.) So why does something this simple work so well as a “similarity”?
+But it is worth slowing down here. A dot product seems to straightforward, and it is not even a metric. So why does something this simple work so well as a “similarity”?
 
 The part many people miss is that when we say “we use a dot product,” we are rarely using a dot product on raw inputs. We use it on learned representations. The model is free to learn a transformation φ(·)—an embedding table, an MLP, a GNN encoder, etc.—so the effective similarity is really
 
@@ -63,7 +63,13 @@ In other words, we are not committing to a fixed hand-designed similarity; we ar
 Mathematically, any positive semidefinite (PSD) kernel can be written as an inner product in some feature space. So within the PSD world, the dot product is not a limitation—it is the canonical form. This helps explain why the same dot-product machinery keeps working across domains: we keep the interface, but we keep changing φ, and φ keeps changing what “similar” means.
 
 #### Similarities in ML models are not that rigid.
-todo.
+So we now know that dot product is not as weak as we thought and we know the limit of it. It can not precisely represent that non-psd kernel metric. But here is the key, in machine learning, many part of it is not about calculating a precise number, it is more like comparion. For objectives, usually we do contrastive, which we want positve sample overweight negative sample. for output, it comes from computing the probability of the different out come, and as long as we can keep the relative order. So the machine more aware of if the choosen similarity can represent the true order of similarity of entities, instead of precise answer of difference. Although the more precision, the better, because the calculation will be used for later layer. But in total, we have the flexibiliy and volume to tolerate some small offs. And dot product seems to be good given the representive power we discussed before.
+
+
+
+
+
+
 
 
 
