@@ -48,11 +48,15 @@ That is why homophily naturally becomes a general modeling choice: not because i
 
 
 ### 2) How we calculate the similarity
-
+New3: Once we accept *homophily* as the generative story—“similar nodes tend to connect”—a second question quietly takes over: **what exactly do we mean by “similar”?**
+In practice, similarity is not a single universal notion. We have cosine similarity, Euclidean distance, Jaccard overlap, edit distance, Wasserstein distance, and many others. Each of them encodes a different inductive bias: cosine focuses on angle (direction), Euclidean focuses on absolute location and scale, Jaccard cares about set overlap, and so on.
+This immediately raises an uncomfortable possibility: **can we be wrong simply by choosing the wrong similarity?**  
+And if so, aren’t we making an *assumption on top of an assumption*—first homophily, then a specific similarity measure?
+The short answer is yes. But there is a reason most embedding methods still converge to a surprisingly small set of “similarity calculators,” especially the dot product.
 #### Dot product as an example
 Dot products show up everywhere in modern machine learning: from word embeddings to graph embedding, from retrieval models to contrastive learning. The first reason is almost trivial: it is the simplest possible interaction between two vectors—cheap to compute, easy to optimize, and easy to scale.
 
-But it is worth slowing down here. A dot product seems to straightforward, and it is not even a metric. So why does something this simple work so well as a “similarity”?
+But it is worth slowing down here. A dot product is not a metric: it does not satisfy the axioms of distance. (Even cosine similarity itself is not a metric; the angular distance derived from it is.) So why does something this simple work so well as a “similarity”?
 
 The part many people miss is that when we say “we use a dot product,” we are rarely using a dot product on raw inputs. We use it on learned representations. The model is free to learn a transformation φ(·)—an embedding table, an MLP, a GNN encoder, etc.—so the effective similarity is really
 
@@ -60,106 +64,17 @@ The part many people miss is that when we say “we use a dot product,” we are
 
 In other words, we are not committing to a fixed hand-designed similarity; we are choosing a learnable interface. The downstream task and training objective shape the parameters of φ, so the representation itself adapts to whatever notion of similarity the task rewards. This is also why embeddings should not be romanticized as “recovering the true features”: they co-evolve with the similarity model and the training signal we chose.
 
-Mathematically, any positive semidefinite (PSD) kernel can be written as an inner product in some feature space. So within the PSD world, the dot product is not a limitation—it is the canonical form. This helps explain why the same dot-product machinery keeps working across domains: we keep the interface, but we keep changing φ, and φ keeps changing what “similar” means.
+Mathematically, any positive semidefinite (PSD) kernel can be written as an inner product in some feature space. So within the PSD world, the dot product is not a limitation—it is the canonical form. This helps explain why the same dot-product machinery keeps working across domains: we keep the interface, but we keep changing φ, and φ keeps changing what “similar” means. 
 
-#### Similarities in ML models are not that rigid.
-So we now know that dot product is not as weak as we thought and we know the limit of it. It can not precisely represent that non-psd kernel metric. But here is the key, in machine learning, many part of it is not about calculating a precise number, it is more like comparion. For objectives, usually we do contrastive, which we want positve sample overweight negative sample. for output, it comes from computing the probability of the different out come, and as long as we can keep the relative order. So the machine more aware of if the choosen similarity can represent the true order of similarity of entities, instead of precise answer of difference. Although the more precision, the better, because the calculation will be used for later layer. But in total, we have the flexibiliy and volume to tolerate some small offs. And dot product seems to be good given the representive power we discussed before.
+But we do want to mention that PSD is not powerful enough for all cases. For example, if we want to model non-symmetric similarities or indefinite similarities, we need to go beyond PSD kernels. Like WIPS (Weighted Inner Product Similarity) from Kim et al. (IJCAI’19), which allows for indefinite inner products by introducing learnable weights λ_k. But this brings up a new question: do we really need precision? the answer is no: in machine learning, we care more about comparison than exact values. Thats why PSD works so well: it gives us a good enough approximation for ranking, without the complexity of non-PSD methods.
 
-
-
-
-
-
-
-
-
-
-
-
-New3: Once we accept *homophily* as the generative story—“similar nodes tend to connect”—a second question quietly takes over: **what exactly do we mean by “similar”?**
-In practice, similarity is not a single universal notion. We have cosine similarity, Euclidean distance, Jaccard overlap, edit distance, Wasserstein distance, and many others. Each of them encodes a different inductive bias: cosine focuses on angle (direction), Euclidean focuses on absolute location and scale, Jaccard cares about set overlap, and so on.
-This immediately raises an uncomfortable possibility: **can we be wrong simply by choosing the wrong similarity?**  
-And if so, aren’t we making an *assumption on top of an assumption*—first homophily, then a specific similarity measure?
-The short answer is yes. But there is a reason most embedding methods still converge to a surprisingly small set of “similarity calculators,” especially the dot product.
-#### Dot product as a universal interface
-Many modern embedding systems do not commit to a handcrafted similarity like “Euclidean” or “Jaccard.” Instead, they choose a simple scoring form and push the complexity into the representation:
-\[
-s(x,y) = \langle \phi(x), \phi(y) \rangle,
-\]
-where `φ(·)` is a learnable embedding function (a table, an MLP, a GNN encoder, etc.). The dot product looks almost too simple, but its strength is precisely that **it is an interface**: if `φ` is expressive, the *effective* similarity becomes expressive.
-Mathematically, any positive semidefinite (PSD) kernel similarity can be written as an inner product in some feature space. So in the PSD world, the dot product is not a limitation—it is the canonical form. This helps explain why the same dot-product machinery keeps working across domains: we keep changing `φ`, and `φ` keeps changing what “similar” means.
-
-
-new3backups: 
-#### But what about Euclidean distance?
-At first glance, this seems to contradict a common intuition: “don’t we often want Euclidean distance, not dot product?”
-The key is that distance and inner product are tightly linked. In Euclidean space,
-\[
-\|\phi(x)-\phi(y)\|^2 = \|\phi(x)\|^2 + \|\phi(y)\|^2 - 2\langle \phi(x), \phi(y) \rangle.
-\]
-If the norms are controlled (by normalization, regularization, or simply the training dynamics), then ranking pairs by dot product becomes closely aligned with ranking them by distance. In other words, embedding methods are rarely trying to recover a fixed “true Euclidean geometry” of the raw data; instead, they learn a geometry in which dot product becomes a useful proxy for closeness.
-This is also why the apparent paradox is not a paradox: saying “dot product cannot represent an arbitrary distance” is a statement about function classes; saying “learning can make dot product behave like a distance” is a statement about **changing the representation so the geometry changes**.
-#### When the PSD world is not enough
-Of course, not every real-world affinity is PSD-kernel-like. Some similarities are indefinite (their Gram matrices have both positive and negative eigenvalues), and some are not even symmetric. In those cases, a single dot product is fundamentally too restrictive.
-This is exactly where a subtle extension becomes powerful: allow the inner product itself to be *indefinite*. Kim et al. (IJCAI’19) propose **Weighted Inner Product Similarity (WIPS)**:
-\[
-\langle y, y' \rangle_{\lambda} = \sum_{k=1}^K \lambda_k y_k y'_k,
-\]
-where the weights `λ_k` are learnable and can be **positive or negative**. This tiny change upgrades the model from “PSD-only” to a much broader family of similarities (including indefinite kernels), greatly reducing the need to manually guess which similarity model a dataset “really” wants.
 #### The deeper takeaway
 So yes, choosing a similarity measure is an assumption. But the reason embedding works so often is that we usually do not pick a single similarity by hand—we pick a **learnable similarity interface**.
 Homophily tells us *what edges mean* (“edges are evidence of similarity”).  
 The similarity model tells us *how similarity is computed*.  
-And the dot product—sometimes upgraded to its weighted/indefinite form—turns that second assumption into something we can optimize, learn, and adapt rather than hard-code.
+And the dot product—sometimes upgraded to its weighted/indefinite form—turns that second assumption into something we can optimize, learn, and adapt rather than hard-code, gives us a good-enough-but-not-perfect approximation that works well in practice.
 
 
-
-New New:
-So assume we know it is similarity that rule. There are infinely many of similaritys. How do we know which kind of similarity we want to calculate? The most common way to do it in machine learning is Euclidean distance and Dot product. How can we confidently say, ok, the similarity is euclidean?
-
-The question seems stupid but the answer is a little bit involved. Many peopel my know the most blatant answer. because the paramer can be learned, for example, if the "truth" similary is x1*y1+100x2*y2. then with enough data, the learn feature will be (x,10y) so the way, machine produce the similarity again becomes x1*y1+100x2*y2 while still using dot product. (Thats also why we emphasis that the learning feature is not necessary the true feature). And some might ask deeper: what if the rule are not simple? what if the similarity expressed in a more complex, nonlinear way?
-
-A thing I want to mention is that dot product is more powerful than many people thought. Mathematically speaking, A single dot product can represent exactly the family of PSD-kernel similarities (inner products in some feature space). The PSD-kernel similarity means that k(x,y) = <φ(x), φ(y)>。
-Dot product looks simple, but its strength comes from learnable representations. What we really learn is the feature map φ(·), making ⟨φ(x), φ(y)⟩ capable of emulating a large family of PSD-kernel similarities—using the same computational interface. There are strict proof shows that IPS equipped with a sufficiently large neural network is highly expressive and it has been proved to approximate arbitrary Positive Definite (PD) similarities [Okuno et al., 2018], e.g., cosine similarity
-
-todo: let AI read the paper and discuss with me.
-
-
-
-new:
-
-Why does the “similarity assumption” so often work in practice?
-
-Part of the reason is simple: in real life, *similarity is not a single formula*. Sometimes we measure it with Euclidean distance, sometimes with cosine similarity, sometimes with correlations, and sometimes with domain-specific heuristics. In an unfamiliar dataset and an unfamiliar task, it is rarely obvious which notion of “closeness” is the right one.
-
-Representation learning gives us a practical escape hatch. Many of the similarities we end up trusting in ML belong to a well-behaved family: **PSD kernels**. A PSD kernel is not a distance metric by itself; it is a similarity function `k(x, y)` with a crucial geometric property: there exists a (possibly high-dimensional) feature map `φ(·)` such that
-
-`k(x, y) = ⟨φ(x), φ(y)⟩`.
-
-Once you view similarity through this lens, the ubiquity of dot products in embeddings becomes less mysterious. Using `uᵀv` is not claiming that similarity is linear. It is choosing a **universal computational interface**: if the embedding can learn a rich enough `φ`, then a wide range of nonlinear kernel-like similarities can be realized (or approximated) by the same dot-product form.
-
-In other words, we are not betting on *one* handcrafted similarity. We are betting that the task-relevant notion of “being similar” can be projected into an inner-product geometry—and letting the embedding learn which one. When that bet holds, the homophily-style objective (“connected nodes should be close”) becomes remarkably effective, not because the world is simple, but because inner-product similarity is a large, learnable, and computationally convenient world.
-
-old:
-
-The second reason homophily works so well lies not only in the assumption itself, but in how similarity is computed.
-
-As discussed earlier, there may be many different mechanisms governing connections. Mathematically, these mechanisms can often be described as some form of scoring function (or pseudo-metric, mathemathically) . The most well-known examples include Euclidean distance and cosine similarity, but in principle there are infinitely many such scoring function that could describe different relational mechanisms.
-
-For example, if certain dimensions are more important than others, we might define a similarity score such as: m1=x1*y1+100x2*y2+x3y3. It doesn't have to be this form. If the relationship involves repulsive components or other mechanism across different dimensions, we might instead consider something like: m2=3*x1y1-4*x2y2+5*x3-8x1*y3. The specific form may vary, but the underlying idea is the same: different mechanisms correspond to different ways of measuring interaction.
-
-In practice, the most commonly used similarity “metric” today is the dot product. It likely gained popularity initially due to its computational convenience. However, its importance goes far beyond efficiency. When jointly learned with model parameters, the dot product can approximate a wide range of similarity functions.
-
-For instance, the weighted interaction in m1 can be approximated by scaling the learned representations—effectively increasing the magnitude of certain dimensions so that a simple dot product reproduces the desired behavior. More technically, it has been shown that dot-product similarity can approximate any positive-definite kernel metric under appropriate conditions (see, for example, the IJCAI 2019 paper: (https://www.ijcai.org/proceedings/2019/0699.pdf)). Dot products cannot represent all possible relations, but they are expressive enough to cover a remarkably large and useful class.
-
-This brings us to a crucial insight.
-
-Similarity appears special not because all relations reduce to similarity, but because similarity provides a universal computational substrate. Many relational rules—semantic, causal, or structural—can be embedded into higher-dimensional spaces where their effects are simulated through geometric proximity or alignment. This does not make those relations inherently metric; it makes them computable.
-
-So back to our question. We choose similarity beacuse it is general enough, in the sense of both empirally observed and computational capcity. And Can it goes wrong? Of course, when other mechanism such as hierarchy or repulsion dominate and the way calculate similarity can not estimate the calculate (negative kernal metric, for example, mathematically speaking). But it is the most general choice we have. we can say:
-
-**Similarity is not the only relation.**
-**It is the language in which many relations are expressed.**
 
 ## Generalized Embedding
 so this is just graph embedding. seems narrow huh? but what if I tell you the idea behind graph embedding appear more than you think? it implictly affect many famous algorithm. I am not saying they designed in this way. But they in fact, in natural conincide in the graph embedding idea. Let me make two examples, netflex collaborative filter. next, word embedding now foundation of LLM.
