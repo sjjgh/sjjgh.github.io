@@ -12,10 +12,12 @@ But as I always do, the question arise: Every node has it own feature, which is 
 This can actually answered by our framework, we will try to answer it by using the homophily graph model. In real life, the observed feature always come with noises. which harm
 the perfomance. In statistice, a commone way to alleviate this kind of noise is called **局部平均**，这和统计学中最基本的降噪手段一致——多次独立观测取均值可以减小方差。 Now to the noisy
 feature of each node, we want do the same thing - we gather the information of similar nodes and average them. And how to find the similar nodes - boom, the graph just
-gives us directly , based on the assumption of homopholy. 层数越多，平均的范围越大，在同质图上初期确实能有效去噪。这也解释了为什么即使是最简单的模型（比如 SGC，Wu et al. 2019，去掉所有非线性，只做 A^KXW\hat{A}^K X W
+gives us directly , based on the assumption of homopholy. 想象一下在学术引用网络图中，我们读到一篇论文写得很烂（noise），以至于我们不能确定他的主题是NLP还是CV，但我们查看他的引用论文，如果
+大部分是NLP（Propagation），那我们更新倾向于认为这篇论文是讲NLP的。 此外，我们实际中并不只依赖局部邻居，通过堆叠两层GNN，我们还可以看到更远的“邻居的邻居”信息， 层数越多，平均的范围越大，在同质图上初期确实能有效去噪。这也解释了为什么即使是最简单的模型（比如 SGC，Wu et al. 2019，去掉所有非线性，只做 A^KXW\hat{A}^K X W
 A^KXW）在同质图上也能表现不错——因为核心机制就是邻域平均去噪。
 
-But we immediately have another question: 我们说过homopholy只是一个非常general的假设，现实中的图往往由很多复杂机理rule，what about异质图？
+But we immediately have another question: 我们说过homopholy只是一个非常general，并且oversimplify的假设，现实中的图往往由很多复杂机理来rule，这种情况下，我们的手段真的没问题吗？
+我们在这里先回答一个特例-异质图，然后再下一篇文章我们会进一步展开这个话题。
 异质图上信息传播是否有害？
 这个问题的答案比较微妙，不是简单的"有害"，而是标准的聚合方式有害，但信息本身不一定有害。
 为什么标准传播有害？ 在异质图上，邻居的标签与自身不同。此时邻域平均不是去噪，而是引入噪声——把不同类别的特征混在一起，反而模糊了节点本身的判别信息。极端情况下，一个节点的所有邻居都是异类，聚合后的表示反而偏离了自身的真实类别。这就是标准GCN在异质图上性能崩溃的原因。
