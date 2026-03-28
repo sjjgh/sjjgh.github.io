@@ -1,0 +1,41 @@
+# Message Propagation in graph learning
+
+So we have after we discussed the embedding of a graph, is that all we can say about a graph in machine learning? The answer is yes and no.
+Yes: theoraticlly speaking, if we do have a "perfect" algorithm to embedding the graph, i.e recover the graph into the features who form the graph, then we are done with the graph,
+we dont need it all. The rest we can hanele to standard machine learning models since now we have structured data without any information loss.
+No: So why I say we still need graphs? The answer is, now the main stream model does not use graph to get feature, they use graphs to do the message propagation.
+
+Here is how propagation works in typical GNN: (to be filled)
+
+But as I always do, the question arise: Every node has it own feature, which is capable to any downstream task, why do we need such a propagation, and how can we explain it in our model?
+
+This can actually answered by our framework, we will try to answer it by using the homophily graph model. In real life, the observed feature always come with noises. which harm
+the perfomance. In statistice, a commone way to alleviate this kind of noise is called **局部平均**，这和统计学中最基本的降噪手段一致——多次独立观测取均值可以减小方差。 Now to the noisy
+feature of each node, we want do the same thing - we gather the information of similar nodes and average them. And how to find the similar nodes - boom, the graph just
+gives us directly , based on the assumption of homopholy. 层数越多，平均的范围越大，在同质图上初期确实能有效去噪。这也解释了为什么即使是最简单的模型（比如 SGC，Wu et al. 2019，去掉所有非线性，只做 A^KXW\hat{A}^K X W
+A^KXW）在同质图上也能表现不错——因为核心机制就是邻域平均去噪。
+
+But we immediately have another question: 我们说过homopholy只是一个非常general的假设，现实中的图往往由很多复杂机理rule，what about异质图？
+异质图上信息传播是否有害？
+这个问题的答案比较微妙，不是简单的"有害"，而是标准的聚合方式有害，但信息本身不一定有害。
+为什么标准传播有害？ 在异质图上，邻居的标签与自身不同。此时邻域平均不是去噪，而是引入噪声——把不同类别的特征混在一起，反而模糊了节点本身的判别信息。极端情况下，一个节点的所有邻居都是异类，聚合后的表示反而偏离了自身的真实类别。这就是标准GCN在异质图上性能崩溃的原因。
+但邻居信息本身是有价值的。 关键的洞察在于：即使邻居与你不同类，"你的邻居是什么类"这个信息本身也具有判别力。比如在一个约会网络中，男性节点主要连接女性节点（异质），但"邻居大多是女性"这个模式恰恰说明该节点可能是男性。信息是有用的，只是不能用简单平均的方式聚合。
+所以对于异质图来说，更准确的总结是：信息传播在异质图上不是天然有害，有害的是"假设邻居与你相似"的聚合方式。如果能让模型意识到邻居可能与自己不同，并以恰当方式利用这种不同，邻域信息仍然是有价值的。这也是近几年GNN研究的一个重要方向。
+
+在这里是一个好机会，更深入聊一下transformer，我们知道我们可以把transformer也当作一种图结构来看，结果会不会又不一样呢？tranformer其实也可以看作一个近似稀疏图，每个节点只与有限个领居算attention（绝大多数attention score接近于0）。但是transformer的特征聚合并不是用来去噪音的。一旦把transformer纳入这个体系，是否还能得到一个统一的观点？
+在GNN中，聚合邻居信息的核心逻辑是利用图结构先验来增强节点表示——正如我们讨论的，同质性假设下这是去噪，异质性下则需要更巧妙的方式。图结构是预先给定的，它编码了领域知识（社交关系、分子键、引用关系等）。
+但Transformer中的情况本质上不同。Transformer的注意力聚合做的事情更接近于动态的、基于内容的信息检索与组合。一个token关注另一个token，不是因为它们"相似所以可以互相去噪"，而是因为另一个token持有当前计算所需要的信息。
+举一个具体例子来看这个差异。在句子"The cat sat on the mat because it was tired"中，"it"对"cat"的高注意力不是因为两者特征相似（"it"和"cat"的embedding完全不同），而是因为"it"需要从"cat"那里取回指代信息来完成自己的语义。这不是去噪，而是信息组装。
+那同质性假设在Transformer中扮演什么角色？
+如果我们硬要在Transformer中找同质性的影子，会发现它以一种非常不同的形式存在。GNN的同质性是标签层面的——相连节点有相同标签。Transformer中如果存在某种"同质性"，更像是功能层面的——在某一层的某个head中，互相关注的token在当前计算任务中扮演相关角色。但这种"相关"可以是相似（同义词互相增强），也可以是互补（动词寻找其主语），甚至是对比（否定词关注被否定的对象）。
+所以Transformer的注意力图天然就是异质的——而且它不仅容忍异质性，还依赖异质性。这恰恰解释了为什么Transformer不受GNN那些困境的束缚。
+
+总结一下：
+GNN的核心逻辑：我的特征是对的，但不够干净，邻居帮我去噪。
+Transformer的核心逻辑：我的特征是干净的（假设），但不够完整，邻居帮我补全。
+去噪 vs 补全，这确实是两种不同的动机。但它们真的无法统一吗？
+其实可以统一，只需要上升一层
+去噪和补全都是同一件事的特例：当前节点的表示不足以完成下游任务，需要从上下文中获取额外信息来缩小这个差距。
+区别只在于"不足"的性质不同。GNN中的"不足"是方差太大——信号被噪声污染，需要通过平均来压缩方差。Transformer中的"不足"是信息缺失——单个token的表示在语义上是不完整的，需要通过组合来补全。
+但从信息论的角度看，这两者是对称的。一个是信号被不需要的东西污染了（需要减法），一个是信号缺少需要的东西（需要加法）。但两者的共同结构是：最终的节点表示 = 当前信息 + f(邻域信息)，而 ff
+f 的目标都是让节点表示对下游任务更充分。
