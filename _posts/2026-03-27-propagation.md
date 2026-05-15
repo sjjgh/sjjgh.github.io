@@ -1,3 +1,8 @@
+---
+title: "Message Propagation in Graph Learning"
+published: false
+---
+
 # Message Propagation in graph learning
 
 ## Another way to use graph
