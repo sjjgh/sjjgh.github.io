@@ -1,13 +1,17 @@
 # Message Propagation in graph learning
 
+## Another way to use graph
+
 So we have after we discussed the embedding of a graph, is that all we can say about a graph in machine learning? The answer is yes and no.
 Yes: theoraticlly speaking, if we do have a "perfect" algorithm to embedding the graph, i.e recover the graph into the features who form the graph, then we are done with the graph,
-we dont need it all. The rest we can hanele to standard machine learning models since now we have structured data without any information loss.
+we dont need it all. The rest we can handle to standard machine learning models since now we have structured data without any information loss.
 No: So why I say we still need graphs? The answer is, now the main stream model does not use graph to get feature, they use graphs to do the message propagation.
 
 Here is how propagation works in typical GNN: (to be filled)
 
-But as I always do, the question arise: Every node has it own feature, which is capable to any downstream task, why do we need such a propagation, and how can we explain it in our model?
+## Why Message Propagation Works
+
+But as I always do- ask the reason behind it, the question arise: Every node has it own feature, which is capable to any downstream task, why do we need such a propagation, and how can we explain it in our model?
 
 This can actually answered by our framework, we will try to answer it by using the homophily graph model. In real life, the observed feature always come with noises. which harm
 the perfomance. In statistice, a commone way to alleviate this kind of noise is called **局部平均**，这和统计学中最基本的降噪手段一致——多次独立观测取均值可以减小方差。 Now to the noisy
@@ -15,33 +19,6 @@ feature of each node, we want do the same thing - we gather the information of s
 gives us directly , based on the assumption of homopholy. 想象一下在学术引用网络图中，我们读到一篇论文写得很烂（noise），以至于我们不能确定他的主题是NLP还是CV，但我们查看他的引用论文，如果
 大部分是NLP（Propagation），那我们更新倾向于认为这篇论文是讲NLP的。 此外，我们实际中并不只依赖局部邻居，通过堆叠两层GNN，我们还可以看到更远的“邻居的邻居”信息， 层数越多，平均的范围越大，在同质图上初期确实能有效去噪。这也解释了为什么即使是最简单的模型（比如 SGC，Wu et al. 2019，去掉所有非线性，只做 A^KXW\hat{A}^K X W
 A^KXW）在同质图上也能表现不错——因为核心机制就是邻域平均去噪。
-
-But we immediately have another question: 我们说过homopholy只是一个非常general，并且oversimplify的假设，现实中的图往往由很多复杂机理来rule，这种情况下，我们的手段真的没问题吗？
-我们在这里先回答一个特例-异质图，之后我们会进一步展开这个话题。
-异质图上信息传播是否有害？
-这个问题的答案比较微妙，不是简单的"有害"，而是标准的聚合方式有害，但信息本身不一定有害。
-为什么标准传播有害？ 在异质图上，邻居的标签与自身不同。此时邻域平均不是去噪，而是引入噪声——把不同类别的特征混在一起，反而模糊了节点本身的判别信息。极端情况下，一个节点的所有邻居都是异类，聚合后的表示反而偏离了自身的真实类别。这就是标准GCN在异质图上性能崩溃的原因。
-但邻居信息本身是有价值的。 关键的洞察在于：即使邻居与你不同类，"你的邻居是什么类"这个信息本身也具有判别力。比如在一个约会网络中，男性节点主要连接女性节点（异质），但"邻居大多是女性"这个模式恰恰说明该节点可能是男性。信息是有用的，只是不能用简单平均的方式聚合。
-所以对于异质图来说，更准确的总结是：信息传播在异质图上不是天然有害，有害的是"假设邻居与你相似"的聚合方式。如果能让模型意识到邻居可能与自己不同，并以恰当方式利用这种不同，邻域信息仍然是有价值的（此时并不是去噪）。这也是近几年GNN研究的一个重要方向。
-
-不过上述讨论依然局限在我们在给定的图上进行信息聚合， 一个更深的问题：而不管图是同质或者异质或者混合（现实中大部分图）， 假设模型知道图信息，那么这个图有可能是用来信息聚合的最佳图吗。
-如果你理解并认同我们的世界观，那么我们应该能达成共识：我们很难相信给定的图是完成任务的最佳图。
-
-我们细细说来，从最简单的同质图开始说，heurstic是-因为我们相信相似的节点相连，那么在相似的节点中，传播信息是有益的。这句话大体来看没有问题，但有个很细微的点，相似这个词太大了，节点在相连时候的相似度
-不一定是任务需要的相似度。举个不太常见例子：我们的图，是宠物爱好协会图，每个人都养不同的宠物，养猫的更容易和养猫的相连，但如果我们的任务，是进行政治倾向分类。我们很难说服自己，把这个图用来propagation是一个好的选择。这是因为宠物爱好的相似度和政治倾向相似度
-衡量的不是一类东西。 这个例子可能有些极端，我们日常中遇见的可能更多的社交关系图之类更general的图，但是我们做任务时要意识到，躺在同质假设下面的相似度是不是和任务相似度是一个或者相似的东西。而且同质图只是一个
-oversimplify的假设，更何况还有异质图和其他机制参与其中，让情况变得更加复杂。
-
-
-几乎可以立马肯定的得出答案：用给定的图做propagation是非常naive的手段， 我们几乎可以肯定初始给定的图不是最适合用来propagation的。原因是，不管我们出于
-什么原因去聚合图，不管是去噪，还是信息互补或者其它的， 一定存在一个图，是最适合我们的目的（也就是最小化我们的loss），但是，我们给定的图是由不可控因素生成的，所以几乎没有可能是我们的最优图。
-举个例子，我们假设有一个基于人的网络图，我们首先可能能从描述中知道这是基于社交的图，或者facebook关注的图。我们的任务是对节点进行分类，
-但是我们无法知道有哪些因素控制了边的生成（年龄，性别，是否养猫。。。etc）任何因素的加入，或者
-因素的权重不同都可能会带来不一样的图。而我们对此一无所知，我们得到的是这个由未知因素+随机性得到的巨大图家族里的某一个图。夸张地说，就好比我们我们期待机器学习随机初始化的模型参数是最优的一样。不现实。
-
-事实上有一部分研究者
-已经认识到了这个问题，并且已经有一些很好的工作用来探索除了初始图之外的图用来聚合，这个领域被称为Structure Learning。
-
 
 在这里是一个好机会，更深入聊一下transformer，我们知道我们可以把transformer也当作一种图结构来看，结果会不会又不一样呢？tranformer其实也可以看作一个近似稀疏图，每个节点只与有限个领居算attention（绝大多数attention score接近于0）。但是transformer的特征聚合并不是用来去噪音的。一旦把transformer纳入这个体系，是否还能得到一个统一的观点？
 在GNN中，聚合邻居信息的核心逻辑是利用图结构先验来增强节点表示——正如我们讨论的，同质性假设下这是去噪，异质性下则需要更巧妙的方式。图结构是预先给定的，它编码了领域知识（社交关系、分子键、引用关系等）。
@@ -60,3 +37,25 @@ Transformer的核心逻辑：我的特征是干净的（假设），但不够完
 区别只在于"不足"的性质不同。GNN中的"不足"是方差太大——信号被噪声污染，需要通过平均来压缩方差。Transformer中的"不足"是信息缺失——单个token的表示在语义上是不完整的，需要通过组合来补全。
 但从信息论的角度看，这两者是对称的。一个是信号被不需要的东西污染了（需要减法），一个是信号缺少需要的东西（需要加法）。但两者的共同结构是：最终的节点表示 = 当前信息 + f(邻域信息)，而 ff
 f 的目标都是让节点表示对下游任务更充分。
+
+
+But we immediately have another question: 我们说过homopholy只是一个非常general，并且oversimplify的假设，现实中的图往往由很多复杂机理来rule，这种情况下，我们的手段真的没问题吗？
+我们在这里先回答一个特例-异质图，之后我们会进一步展开这个话题。
+异质图上信息传播是否有害？
+这个问题的答案比较微妙，不是简单的"有害"，而是标准的聚合方式有害，但信息本身不一定有害。
+为什么标准传播有害？ 在异质图上，邻居的标签与自身不同。此时邻域平均不是去噪，而是引入噪声——把不同类别的特征混在一起，反而模糊了节点本身的判别信息。极端情况下，一个节点的所有邻居都是异类，聚合后的表示反而偏离了自身的真实类别。这就是标准GCN在异质图上性能崩溃的原因。
+但邻居信息本身是有价值的。 关键的洞察在于：即使邻居与你不同类，"你的邻居是什么类"这个信息本身也具有判别力。比如在一个约会网络中，男性节点主要连接女性节点（异质），但"邻居大多是女性"这个模式恰恰说明该节点可能是男性。信息是有用的，只是不能用简单平均的方式聚合。
+所以对于异质图来说，更准确的总结是：信息传播在异质图上不是天然有害，有害的是"假设邻居与你相似"的聚合方式。如果能让模型意识到邻居可能与自己不同，并以恰当方式利用这种不同，邻域信息仍然是有价值的（此时并不是去噪）。这也是近几年GNN研究的一个重要方向。
+
+不过上述讨论依然局限在我们在给定的图上进行信息聚合， 一个更深的问题：而不管图是同质或者异质或者混合（现实中大部分图）， 我给定了一个图，和一个任务，这个图真的适合用来做这个任务吗。
+如果你理解并认同我们的世界观，那么我们应该能达成共识：我们很难说服自己给定的图是完成任务的最佳图。
+
+我们细细说来，从最简单的同质图开始说，heurstic是-因为我们相信相似的节点相连，那么在相似的节点中，传播信息是有益的。这句话大体来看没有问题，但有个很细微的点，相似这个词太大了，节点在相连时候的相似度
+不一定是任务需要的相似度。举个不太常见例子：我们的图，是宠物爱好协会图，每个人都养不同的宠物，养猫的更容易和养猫的相连，但如果我们的任务，是进行政治倾向分类。我们很难说服自己，把这个图用来propagation是一个好的选择。这是因为宠物爱好的相似度和政治倾向相似度
+衡量的不是一类东西。 这个例子可能有些极端，我们日常中遇见的可能更多的社交关系图之类更general的图，但是我们做任务时要意识到，躺在同质假设下面的相似度是不是和任务相似度是一个或者相似的东西。而且同质图只是一个
+oversimplify的假设，更何况还有异质图和其他机制参与其中，让情况变得更加复杂。
+
+
+事实上有一部分研究者
+已经认识到了这个问题，并且已经有一些很好的工作用来探索除了初始图之外的图用来聚合，这个领域被称为Structure Learning。
+
