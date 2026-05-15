@@ -19,7 +19,7 @@ feature of each node, we want do the same thing - we gather the information of s
 gives us directly , based on the assumption of homopholy. 想象一下在学术引用网络图中，我们读到一篇论文写得很烂（noise），以至于我们不能确定他的主题是NLP还是CV，但我们查看他的引用论文，如果
 大部分是NLP（Propagation），那我们更新倾向于认为这篇论文是讲NLP的。 此外，我们实际中并不只依赖局部邻居，通过堆叠两层GNN，我们还可以看到更远的“邻居的邻居”信息， 层数越多，平均的范围越大，在同质图上初期确实能有效去噪。这也解释了为什么即使是最简单的模型（比如 SGC，Wu et al. 2019，去掉所有非线性，只做 A^KXW\hat{A}^K X W
 A^KXW）在同质图上也能表现不错——因为核心机制就是邻域平均去噪。
-
+### speaking transformer as a sidenote
 在这里是一个好机会，更深入聊一下transformer，我们知道我们可以把transformer也当作一种图结构来看，结果会不会又不一样呢？tranformer其实也可以看作一个近似稀疏图，每个节点只与有限个领居算attention（绝大多数attention score接近于0）。但是transformer的特征聚合并不是用来去噪音的。一旦把transformer纳入这个体系，是否还能得到一个统一的观点？
 在GNN中，聚合邻居信息的核心逻辑是利用图结构先验来增强节点表示——正如我们讨论的，同质性假设下这是去噪，异质性下则需要更巧妙的方式。图结构是预先给定的，它编码了领域知识（社交关系、分子键、引用关系等）。
 但Transformer中的情况本质上不同。Transformer的注意力聚合做的事情更接近于动态的、基于内容的信息检索与组合。一个token关注另一个token，不是因为它们"相似所以可以互相去噪"，而是因为另一个token持有当前计算所需要的信息。
@@ -38,6 +38,7 @@ Transformer的核心逻辑：我的特征是干净的（假设），但不够完
 但从信息论的角度看，这两者是对称的。一个是信号被不需要的东西污染了（需要减法），一个是信号缺少需要的东西（需要加法）。但两者的共同结构是：最终的节点表示 = 当前信息 + f(邻域信息)，而 ff
 f 的目标都是让节点表示对下游任务更充分。
 
+## Is propagation on given graph really a good idea?
 
 But we immediately have another question: 我们说过homopholy只是一个非常general，并且oversimplify的假设，现实中的图往往由很多复杂机理来rule，这种情况下，我们的手段真的没问题吗？
 我们在这里先回答一个特例-异质图，之后我们会进一步展开这个话题。
