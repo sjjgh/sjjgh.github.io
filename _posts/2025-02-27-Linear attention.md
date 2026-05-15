@@ -1,3 +1,8 @@
+---
+title: "linear attn"
+published: false
+---
+
 为甚么QKV 可以写成Q(KV)
 我们怎么从直觉上理解？
 可以想象d=1的情况，注意最终每个元素等于q1kx乘以对应vx两种计算方法
